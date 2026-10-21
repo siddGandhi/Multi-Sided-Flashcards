@@ -1,58 +1,589 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Flashcards</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<style>
-:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#252525;background:#fafafa}*{box-sizing:border-box}body{margin:0}main{max-width:850px;margin:60px auto;padding:0 22px}header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:32px}h1{font-size:26px;letter-spacing:-1px;font-weight:650;margin:0}small,.muted{color:#888}button,input,select{font:inherit}button,select,.upload{border:1px solid #dedede;background:#fff;border-radius:10px;padding:10px 14px;color:#333}button{cursor:pointer}button:hover,.upload:hover{background:#f1f1f1}button:disabled{opacity:.4;cursor:not-allowed}.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-bottom:24px}.upload{cursor:pointer;display:inline-block}.upload input{display:none}.control{display:flex;align-items:center;gap:8px;font-size:13px;color:#666}.control select{max-width:190px}.toggle{display:flex;align-items:center;gap:9px;cursor:pointer}.toggle input{accent-color:#555;width:17px;height:17px}.card{height:340px;border:1px solid #dedede;border-radius:18px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:35px;cursor:pointer;user-select:none;box-shadow:0 7px 25px #00000005;transition:background .15s}.card:hover{background:#fdfdfd}.eyebrow{text-transform:uppercase;letter-spacing:2px;font-size:11px;color:#999;margin-bottom:26px}.value{font-size:clamp(27px,5vw,44px);font-weight:550;overflow-wrap:anywhere;white-space:pre-wrap;line-height:1.3}.hint{font-size:12px;color:#aaa;margin-top:30px}.navigation{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px}.nav-group{display:flex;gap:8px}.status{font-size:13px;color:#777}.info{font-size:12px;color:#888;margin-top:28px;line-height:1.8}.info code{background:#eee;padding:3px 5px;border-radius:4px}.message{font-size:13px;color:#777;margin-bottom:15px;min-height:18px} .side-picker{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.side-picker .side-button{padding:8px 12px;font-size:12px}.side-button.active{background:#555;color:#fff;border-color:#555}.card-area{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:14px;align-items:stretch}.next-side{border:1px solid #e2e2e2;border-radius:14px;background:#f5f5f5;padding:15px 12px;display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center;overflow-wrap:anywhere}.next-side .mini-label{font-size:10px;letter-spacing:1px;color:#999;text-transform:uppercase}.next-side .mini-name{font-size:12px;color:#555;font-weight:600}.next-side .mini-value{font-size:14px;color:#666;overflow-wrap:anywhere;white-space:pre-wrap}.card{position:relative;overflow:hidden;isolation:isolate}.card::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;background:linear-gradient(90deg,transparent 0%,#d4d4d4a8 48%,transparent 100%)}.card.flash-right::after{animation:flash-right .34s ease-out}.card.flash-left::after{animation:flash-left .34s ease-out}.card.flash-up::after,.card.flash-down::after{background:linear-gradient(180deg,transparent 0%,#d4d4d4a8 48%,transparent 100%)}.card.flash-up::after{animation:flash-up .34s ease-out}.card.flash-down::after{animation:flash-down .34s ease-out}@keyframes flash-right{0%{opacity:0;transform:translateX(-110%)}40%{opacity:1}100%{opacity:0;transform:translateX(110%)}}@keyframes flash-left{0%{opacity:0;transform:translateX(110%)}40%{opacity:1}100%{opacity:0;transform:translateX(-110%)}}@keyframes flash-down{0%{opacity:0;transform:translateY(-110%)}40%{opacity:1}100%{opacity:0;transform:translateY(110%)}}@keyframes flash-up{0%{opacity:0;transform:translateY(110%)}40%{opacity:1}100%{opacity:0;transform:translateY(-110%)}}.hidden{display:none}@media(max-width:580px){main{margin:28px auto}header{margin-bottom:25px}.card{height:300px}.card-area{grid-template-columns:minmax(0,1fr) 88px}.next-side{padding:10px 7px}.toolbar{align-items:flex-start}.navigation{flex-wrap:wrap}.status{order:-1;width:100%;text-align:center;margin-bottom:5px}}
-.side-rail{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:9px;min-width:0}.rail-caption,.rail-hint{font-size:10px;color:#999;text-align:center;letter-spacing:.8px}.rail-hint{letter-spacing:0}.side-tiles{display:flex;flex-direction:column;align-items:stretch;gap:0;max-height:340px;overflow-y:auto;scrollbar-width:thin;padding:3px}.side-tile{min-height:36px;border:1px solid #d8d8d8;border-radius:9px;background:#fff;color:#777;display:flex;align-items:center;justify-content:center;text-align:center;padding:7px 5px;font-size:11px;font-weight:550;overflow-wrap:anywhere;line-height:1.25;transition:background .18s,color .18s,border-color .18s}.side-tile.current{background:#555;color:#fff;border-color:#555}.tile-arrows{text-align:center;font-size:14px;line-height:24px;color:#aaa;letter-spacing:4px;user-select:none}.shuffle-button.active{background:#666;color:white;border-color:#666}.shuffle-button.active:hover{background:#555}@media(max-width:580px){.side-tile{font-size:10px;min-height:32px}.tile-arrows{line-height:20px}.rail-caption{font-size:9px}}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Flashcards</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #252525;
+      background: #fafafa
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    body {
+      margin: 0
+    }
+
+    main {
+      max-width: 850px;
+      margin: 60px auto;
+      padding: 0 22px
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 32px
+    }
+
+    h1 {
+      font-size: 26px;
+      letter-spacing: -1px;
+      font-weight: 650;
+      margin: 0
+    }
+
+    small,
+    .muted {
+      color: #888
+    }
+
+    button,
+    input,
+    select {
+      font: inherit
+    }
+
+    button,
+    select,
+    .upload {
+      border: 1px solid #dedede;
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: #333
+    }
+
+    button {
+      cursor: pointer
+    }
+
+    button:hover,
+    .upload:hover {
+      background: #f1f1f1
+    }
+
+    button:disabled {
+      opacity: .4;
+      cursor: not-allowed
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px
+    }
+
+    .upload {
+      cursor: pointer;
+      display: inline-block
+    }
+
+    .upload input {
+      display: none
+    }
+
+    .control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666
+    }
+
+    .control select {
+      max-width: 190px
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      cursor: pointer
+    }
+
+    .toggle input {
+      accent-color: #555;
+      width: 17px;
+      height: 17px
+    }
+
+    .card {
+      height: 340px;
+      border: 1px solid #dedede;
+      border-radius: 18px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 35px;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 7px 25px #00000005;
+      transition: background .15s
+    }
+
+    .card:hover {
+      background: #fdfdfd
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 11px;
+      color: #999;
+      margin-bottom: 26px
+    }
+
+    .value {
+      font-size: clamp(27px, 5vw, 44px);
+      font-weight: 550;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      line-height: 1.3
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 30px
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px
+    }
+
+    .nav-group {
+      display: flex;
+      gap: 8px
+    }
+
+    .status {
+      font-size: 13px;
+      color: #777
+    }
+
+    .info {
+      font-size: 12px;
+      color: #888;
+      margin-top: 28px;
+      line-height: 1.8
+    }
+
+    .info code {
+      background: #eee;
+      padding: 3px 5px;
+      border-radius: 4px
+    }
+
+    .message {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 15px;
+      min-height: 18px
+    }
+
+    .side-picker {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px
+    }
+
+    .side-picker .side-button {
+      padding: 8px 12px;
+      font-size: 12px
+    }
+
+    .side-button.active {
+      background: #555;
+      color: #fff;
+      border-color: #555
+    }
+
+    .card-area {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 112px;
+      gap: 14px;
+      align-items: stretch
+    }
+
+    .next-side {
+      border: 1px solid #e2e2e2;
+      border-radius: 14px;
+      background: #f5f5f5;
+      padding: 15px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      text-align: center;
+      overflow-wrap: anywhere
+    }
+
+    .next-side .mini-label {
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: #999;
+      text-transform: uppercase
+    }
+
+    .next-side .mini-name {
+      font-size: 12px;
+      color: #555;
+      font-weight: 600
+    }
+
+    .next-side .mini-value {
+      font-size: 14px;
+      color: #666;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      background: linear-gradient(90deg, transparent 0%, #d4d4d4a8 48%, transparent 100%)
+    }
+
+    .card.flash-right::after {
+      animation: flash-right .34s ease-out
+    }
+
+    .card.flash-left::after {
+      animation: flash-left .34s ease-out
+    }
+
+    .card.flash-up::after,
+    .card.flash-down::after {
+      background: linear-gradient(180deg, transparent 0%, #d4d4d4a8 48%, transparent 100%)
+    }
+
+    .card.flash-up::after {
+      animation: flash-up .34s ease-out
+    }
+
+    .card.flash-down::after {
+      animation: flash-down .34s ease-out
+    }
+
+    @keyframes flash-right {
+      0% {
+        opacity: 0;
+        transform: translateX(-110%)
+      }
+
+      40% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(110%)
+      }
+    }
+
+    @keyframes flash-left {
+      0% {
+        opacity: 0;
+        transform: translateX(110%)
+      }
+
+      40% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(-110%)
+      }
+    }
+
+    @keyframes flash-down {
+      0% {
+        opacity: 0;
+        transform: translateY(-110%)
+      }
+
+      40% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(110%)
+      }
+    }
+
+    @keyframes flash-up {
+      0% {
+        opacity: 0;
+        transform: translateY(110%)
+      }
+
+      40% {
+        opacity: 1
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateY(-110%)
+      }
+    }
+
+    .hidden {
+      display: none
+    }
+
+    @media(max-width:580px) {
+      main {
+        margin: 28px auto
+      }
+
+      header {
+        margin-bottom: 25px
+      }
+
+      .card {
+        height: 300px
+      }
+
+      .card-area {
+        grid-template-columns: minmax(0, 1fr) 88px
+      }
+
+      .next-side {
+        padding: 10px 7px
+      }
+
+      .toolbar {
+        align-items: flex-start
+      }
+
+      .navigation {
+        flex-wrap: wrap
+      }
+
+      .status {
+        order: -1;
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px
+      }
+    }
+
+    .side-rail {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 9px;
+      min-width: 0
+    }
+
+    .rail-caption,
+    .rail-hint {
+      font-size: 10px;
+      color: #999;
+      text-align: center;
+      letter-spacing: .8px
+    }
+
+    .rail-hint {
+      letter-spacing: 0
+    }
+
+    .side-tiles {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      max-height: 340px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      padding: 3px
+    }
+
+    .side-tile {
+      min-height: 36px;
+      border: 1px solid #d8d8d8;
+      border-radius: 9px;
+      background: #fff;
+      color: #777;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 7px 5px;
+      font-size: 11px;
+      font-weight: 550;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
+      transition: background .18s, color .18s, border-color .18s
+    }
+
+    .side-tile.current {
+      background: #555;
+      color: #fff;
+      border-color: #555
+    }
+
+    .tile-arrows {
+      text-align: center;
+      font-size: 14px;
+      line-height: 24px;
+      color: #aaa;
+      letter-spacing: 4px;
+      user-select: none
+    }
+
+    .shuffle-button.active {
+      background: #666;
+      color: white;
+      border-color: #666
+    }
+
+    .shuffle-button.active:hover {
+      background: #555
+    }
+
+    @media(max-width:580px) {
+      .side-tile {
+        font-size: 10px;
+        min-height: 32px
+      }
+
+      .tile-arrows {
+        line-height: 20px
+      }
+
+      .rail-caption {
+        font-size: 9px
+      }
+    }
+  </style>
 </head>
-<body><main>
-<header><h1>Flashcards<span style="color:#bbb">.</span></h1><small id="deckName">No deck loaded</small></header>
-<div class="toolbar">
-<label class="upload">Upload Excel / CSV<input id="file" type="file" accept=".xlsx,.xls,.csv"></label>
-<div class="side-picker" id="sidePicker" aria-label="Choose starting side"><span class="muted" style="font-size:13px">Starting side</span><div id="startSideButtons" class="side-picker"></div></div>
-<button id="shuffle" type="button" class="shuffle-button" aria-pressed="false">Shuffle</button>
-</div>
-<div class="message" id="message" role="status" aria-live="polite"></div>
-<div class="card-area"><div class="card" id="card" role="button" tabindex="0" aria-label="Show next side of flashcard"><div class="eyebrow" id="sideLabel"></div><div class="value" id="value"></div><div class="hint" id="hint">Click to reveal next side</div></div><aside class="side-rail" id="sideRail" aria-label="Card sides"><div class="rail-caption">CARD SIDES</div><div id="sideTiles" class="side-tiles"></div><div class="rail-hint">↑ / ↓ sides</div></aside></div>
-<div class="navigation"><div class="nav-group"><button id="prev">← Previous</button><button id="next">Next →</button></div><span class="status" id="counter"></span><button id="reset">Reset</button></div>
-<p class="info">Spreadsheet format: the <strong>first row contains column headings</strong>, and every subsequent row becomes a card. Each column becomes one side. Example: <code>Name</code> · <code>Polarity</code> · <code>One-letter code</code>. Click the card, press <code>Space</code> or <code>↓</code> for the next side, or <code>↑</code> for the previous side. Use <code>←</code> / <code>→</code> to navigate cards. Files are processed in your browser and are not uploaded to a server.</p>
-</main>
-<script>
-'use strict';
-const $=id=>document.getElementById(id);
-let headings=[];
-let cards=[];
-let order=[],position=0,side=0,startSide=0;
-function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function rebuildOrder(){order=cards.map((_,i)=>i);if($('shuffle').getAttribute('aria-pressed')==='true')shuffleArray(order);position=0;side=startSide;render();}
-function updateSideOptions(){const container=$('startSideButtons');container.replaceChildren();$('sidePicker').classList.toggle('hidden',!cards.length);headings.forEach((h,i)=>{const btn=document.createElement('button');btn.type='button';btn.className='side-button';btn.textContent=String(i+1);btn.title=h;btn.setAttribute('aria-label',`Start on side ${i+1}: ${h}`);btn.setAttribute('aria-pressed',String(i===startSide));btn.addEventListener('click',()=>{startSide=i;side=i;syncSideButtons();render();});container.append(btn);});syncSideButtons();}
-function syncSideButtons(){[...$('startSideButtons').children].forEach((b,i)=>{b.classList.toggle('active',i===startSide);b.setAttribute('aria-pressed',String(i===startSide));});}
-function animateCard(direction){const card=$('card');card.classList.remove('flash-right','flash-left','flash-up','flash-down');void card.offsetWidth;card.classList.add('flash-'+direction);}
-function render(){const has=cards.length>0;const values=has?cards[order[position]]:[];$('sideLabel').textContent=has?`SIDE ${side+1} OF ${headings.length} · ${headings[side]}`:'NO CARDS';$('value').textContent=has?(values[side]||'—'):'Upload a spreadsheet to begin';$('hint').textContent=has?'Click or press Space / ↓ to reveal next side':'';$('counter').textContent=has?`${position+1} / ${cards.length} cards`:'0 cards';$('prev').disabled=!has||position===0;$('next').disabled=!has||position===cards.length-1;$('reset').disabled=!has;updateSideTiles();}
-function updateSideTiles(){const tiles=$('sideTiles');tiles.replaceChildren();$('sideRail').classList.toggle('hidden',!cards.length);headings.forEach((heading,i)=>{const tile=document.createElement('div');tile.className='side-tile'+(i===side?' current':'');tile.textContent=heading;tile.title=heading;tile.setAttribute('aria-current',i===side?'true':'false');tiles.append(tile);if(i<headings.length-1){const arrows=document.createElement('div');arrows.className='tile-arrows';arrows.textContent='↑ ↓';arrows.setAttribute('aria-hidden','true');tiles.append(arrows);}});}
-function flip(delta=1){if(!cards.length)return;side=(side+delta+headings.length)%headings.length;render();animateCard(delta>0?'down':'up');}
-function navigate(delta){const p=position+delta;if(p<0||p>=cards.length)return;position=p;side=startSide;render();animateCard(delta>0?'right':'left');}
-$('card').addEventListener('click',flip);
-$('prev').addEventListener('click',()=>navigate(-1));$('next').addEventListener('click',()=>navigate(1));
-$('reset').addEventListener('click',rebuildOrder);$('shuffle').addEventListener('click',()=>{const active=$('shuffle').getAttribute('aria-pressed')!=='true';$('shuffle').setAttribute('aria-pressed',String(active));$('shuffle').classList.toggle('active',active);rebuildOrder();});
-// Keyboard shortcuts take priority over focused buttons, preventing Space from
-// re-clicking the last selected control. Allow native typing in form fields.
-document.addEventListener('keydown',e=>{
-  if(e.altKey||e.ctrlKey||e.metaKey||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName)||e.target.isContentEditable)return;
-  if(!cards.length)return;
-  if(e.key==='ArrowRight'){e.preventDefault();navigate(1);}
-  else if(e.key==='ArrowLeft'){e.preventDefault();navigate(-1);}
-  else if(e.key==='ArrowDown'){e.preventDefault();flip(1);}
-  else if(e.key==='ArrowUp'){e.preventDefault();flip(-1);}
-  else if(e.code==='Space'){e.preventDefault();flip(1);}
-  else if(e.key==='Enter'&&e.target===$('card')){e.preventDefault();flip(1);}
-});
-// Release mouse focus from controls after clicking, while retaining accessible
-// keyboard focus for Tab users.
-document.addEventListener('pointerup',e=>{const button=e.target.closest('button');if(button)button.blur();});
-$('file').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(typeof XLSX==='undefined')throw Error('Excel parser unavailable. Check your internet connection and reload.');const data=await file.arrayBuffer();const book=XLSX.read(data,{type:'array'});const sheet=book.Sheets[book.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:false,blankrows:false});if(rows.length<2)throw Error('The spreadsheet needs a header row and at least one card row.');const width=Math.max(...rows.map(r=>r.length));if(width<2)throw Error('Please provide at least two columns.');const newHeadings=Array.from({length:width},(_,i)=>String(rows[0][i]??'').trim()||`Column ${i+1}`);const newCards=rows.slice(1).map(row=>Array.from({length:width},(_,i)=>String(row[i]??'').trim())).filter(row=>row.some(v=>v!==''));if(!newCards.length)throw Error('No flashcard rows found.');headings=newHeadings;cards=newCards;startSide=0;updateSideOptions();$('deckName').textContent=file.name;$('message').textContent=`Loaded ${cards.length} cards with ${headings.length} sides each.`;rebuildOrder();}catch(err){$('message').textContent=`Could not open file: ${err.message}`;}finally{e.target.value='';}});
-updateSideOptions();rebuildOrder();
-</script></body></html>
+
+<body>
+  <main>
+    <header>
+      <h1>Flashcards<span style="color:#bbb">.</span></h1><small id="deckName">No deck loaded</small>
+    </header>
+    <div class="toolbar">
+      <label class="upload">Upload Excel / CSV<input id="file" type="file" accept=".xlsx,.xls,.csv"></label>
+      <select id="savedDecks" aria-label="Saved decks">
+        <option value="">Saved decks</option>
+      </select>
+      <button id="deleteDeck" type="button" disabled>Delete deck</button>
+      <div class="side-picker" id="sidePicker" aria-label="Choose starting side"><span class="muted"
+          style="font-size:13px">Starting side</span>
+        <div id="startSideButtons" class="side-picker"></div>
+      </div>
+      <button id="shuffle" type="button" class="shuffle-button" aria-pressed="false">Shuffle</button>
+    </div>
+    <div class="message" id="message" role="status" aria-live="polite"></div>
+    <div class="card-area">
+      <div class="card" id="card" role="button" tabindex="0" aria-label="Show next side of flashcard">
+        <div class="eyebrow" id="sideLabel"></div>
+        <div class="value" id="value"></div>
+        <div class="hint" id="hint">Click to reveal next side</div>
+      </div>
+      <aside class="side-rail" id="sideRail" aria-label="Card sides">
+        <div class="rail-caption">CARD SIDES</div>
+        <div id="sideTiles" class="side-tiles"></div>
+        <div class="rail-hint">↑ / ↓ sides</div>
+      </aside>
+    </div>
+    <div class="navigation">
+      <div class="nav-group"><button id="prev">← Previous</button><button id="next">Next →</button></div><span
+        class="status" id="counter"></span><button id="reset">Reset</button>
+    </div>
+    <p class="info">Spreadsheet format: the <strong>first row contains column headings</strong>, and every subsequent
+      row becomes a card. Each column becomes one side. Example: <code>Name</code> · <code>Polarity</code> ·
+      <code>One-letter code</code>. Click the card, press <code>Space</code> or <code>↓</code> for the next side, or
+      <code>↑</code> for the previous side. Use <code>←</code> / <code>→</code> to navigate cards. Decks are saved in
+      this browser for later use. Files are processed locally and are not uploaded to a server.
+    </p>
+  </main>
+  <script>
+    'use strict';
+    const $ = id => document.getElementById(id);
+    let headings = [];
+    let cards = [];
+    let order = [], position = 0, side = 0, startSide = 0;
+    let currentDeckId = null;
+    const DB_NAME = 'FlashcardStorage', STORE_NAME = 'decks', LAST_DECK_KEY = 'lastFlashcardDeck';
+    function openDB() { return new Promise((resolve, reject) => { const req = indexedDB.open(DB_NAME, 1); req.onupgradeneeded = () => { if (!req.result.objectStoreNames.contains(STORE_NAME)) req.result.createObjectStore(STORE_NAME, { keyPath: 'id' }); }; req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error); }); }
+    async function deckRequest(mode, operate) { const db = await openDB(); try { return await new Promise((resolve, reject) => { const tx = db.transaction(STORE_NAME, mode), store = tx.objectStore(STORE_NAME); let result; const req = operate(store); req.onsuccess = () => { result = req.result; }; tx.oncomplete = () => resolve(result); tx.onerror = () => reject(tx.error || new Error('Database error')); tx.onabort = () => reject(tx.error || new Error('Database operation cancelled')); }); } finally { db.close(); } }
+    const saveDeck = deck => deckRequest('readwrite', store => store.put(deck));
+    const getDeck = id => deckRequest('readonly', store => store.get(id));
+    const getAllDecks = () => deckRequest('readonly', store => store.getAll());
+    const removeDeck = id => deckRequest('readwrite', store => store.delete(id));
+    async function refreshDeckList() { const decks = await getAllDecks(); const menu = $('savedDecks'); menu.replaceChildren(new Option('Saved decks', '')); decks.sort((a, b) => a.name.localeCompare(b.name)); for (const deck of decks) menu.add(new Option(deck.name, deck.id)); menu.value = currentDeckId || ''; $('deleteDeck').disabled = !currentDeckId; }
+    async function loadSavedDeck(id) { const deck = await getDeck(id); if (!deck) return false; headings = deck.headings; cards = deck.cards; startSide = 0; currentDeckId = deck.id; $('deckName').textContent = deck.name; updateSideOptions(); rebuildOrder(); localStorage.setItem(LAST_DECK_KEY, id); $('message').textContent = `Loaded ${cards.length} saved cards with ${headings.length} sides each.`; await refreshDeckList(); return true; }
+    async function saveCurrentDeck(name) { const deck = { id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + '-' + Math.random(), name, headings: headings.map(x => x), cards: cards.map(row => row.slice()) }; await saveDeck(deck); currentDeckId = deck.id; localStorage.setItem(LAST_DECK_KEY, deck.id); await refreshDeckList(); }
+
+    function shuffleArray(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[a[i], a[j]] = [a[j], a[i]]; } return a; }
+    function rebuildOrder() { order = cards.map((_, i) => i); if ($('shuffle').getAttribute('aria-pressed') === 'true') shuffleArray(order); position = 0; side = startSide; render(); }
+    function updateSideOptions() { const container = $('startSideButtons'); container.replaceChildren(); $('sidePicker').classList.toggle('hidden', !cards.length); headings.forEach((h, i) => { const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'side-button'; btn.textContent = String(i + 1); btn.title = h; btn.setAttribute('aria-label', `Start on side ${i + 1}: ${h}`); btn.setAttribute('aria-pressed', String(i === startSide)); btn.addEventListener('click', () => { startSide = i; side = i; syncSideButtons(); render(); }); container.append(btn); }); syncSideButtons(); }
+    function syncSideButtons() { [...$('startSideButtons').children].forEach((b, i) => { b.classList.toggle('active', i === startSide); b.setAttribute('aria-pressed', String(i === startSide)); }); }
+    function animateCard(direction) { const card = $('card'); card.classList.remove('flash-right', 'flash-left', 'flash-up', 'flash-down'); void card.offsetWidth; card.classList.add('flash-' + direction); }
+    function render() { const has = cards.length > 0; const values = has ? cards[order[position]] : []; $('sideLabel').textContent = has ? `SIDE ${side + 1} OF ${headings.length} · ${headings[side]}` : 'NO CARDS'; $('value').textContent = has ? (values[side] || '—') : 'Upload a spreadsheet to begin'; $('hint').textContent = has ? 'Click or press Space / ↓ to reveal next side' : ''; $('counter').textContent = has ? `${position + 1} / ${cards.length} cards` : '0 cards'; $('prev').disabled = !has || position === 0; $('next').disabled = !has || position === cards.length - 1; $('reset').disabled = !has; updateSideTiles(); }
+    function updateSideTiles() { const tiles = $('sideTiles'); tiles.replaceChildren(); $('sideRail').classList.toggle('hidden', !cards.length); headings.forEach((heading, i) => { const tile = document.createElement('div'); tile.className = 'side-tile' + (i === side ? ' current' : ''); tile.textContent = heading; tile.title = heading; tile.setAttribute('aria-current', i === side ? 'true' : 'false'); tiles.append(tile); if (i < headings.length - 1) { const arrows = document.createElement('div'); arrows.className = 'tile-arrows'; arrows.textContent = '↑ ↓'; arrows.setAttribute('aria-hidden', 'true'); tiles.append(arrows); } }); }
+    function flip(delta = 1) { if (!cards.length) return; side = (side + delta + headings.length) % headings.length; render(); animateCard(delta > 0 ? 'down' : 'up'); }
+    function navigate(delta) { const p = position + delta; if (p < 0 || p >= cards.length) return; position = p; side = startSide; render(); animateCard(delta > 0 ? 'right' : 'left'); }
+    $('card').addEventListener('click', () => flip(1));
+    $('prev').addEventListener('click', () => navigate(-1)); $('next').addEventListener('click', () => navigate(1));
+    $('reset').addEventListener('click', rebuildOrder); $('shuffle').addEventListener('click', () => { const active = $('shuffle').getAttribute('aria-pressed') !== 'true'; $('shuffle').setAttribute('aria-pressed', String(active)); $('shuffle').classList.toggle('active', active); rebuildOrder(); });
+    // Keyboard shortcuts take priority over focused buttons, preventing Space from
+    // re-clicking the last selected control. Allow native typing in form fields.
+    document.addEventListener('keydown', e => {
+      if (e.altKey || e.ctrlKey || e.metaKey || ['INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable) return;
+      if (!cards.length) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); navigate(1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); flip(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); flip(-1); }
+      else if (e.code === 'Space') { e.preventDefault(); flip(1); }
+      else if (e.key === 'Enter' && e.target === $('card')) { e.preventDefault(); flip(1); }
+    });
+    // Release mouse focus from controls after clicking, while retaining accessible
+    // keyboard focus for Tab users.
+    document.addEventListener('pointerup', e => { const button = e.target.closest('button'); if (button) button.blur(); });
+    $('savedDecks').addEventListener('change', async e => { if (!e.target.value) return; try { await loadSavedDeck(e.target.value); } catch (err) { $('message').textContent = `Could not load deck: ${err.message}`; } });
+    $('deleteDeck').addEventListener('click', async () => { if (!currentDeckId) return; if (!confirm(`Delete "${$('deckName').textContent}" from saved decks?`)) return; try { await removeDeck(currentDeckId); currentDeckId = null; localStorage.removeItem(LAST_DECK_KEY); headings = []; cards = []; startSide = 0; $('deckName').textContent = 'No deck loaded'; $('message').textContent = 'Saved deck deleted.'; updateSideOptions(); rebuildOrder(); await refreshDeckList(); } catch (err) { $('message').textContent = `Could not delete deck: ${err.message}`; } });
+    $('file').addEventListener('change', async e => { const file = e.target.files[0]; if (!file) return; try { if (typeof XLSX === 'undefined') throw Error('Excel parser unavailable. Check your internet connection and reload.'); const data = await file.arrayBuffer(); const book = XLSX.read(data, { type: 'array' }); const sheet = book.Sheets[book.SheetNames[0]]; const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false, blankrows: false }); if (rows.length < 2) throw Error('The spreadsheet needs a header row and at least one card row.'); const width = Math.max(...rows.map(r => r.length)); if (width < 2) throw Error('Please provide at least two columns.'); const newHeadings = Array.from({ length: width }, (_, i) => String(rows[0][i] ?? '').trim() || `Column ${i + 1}`); const newCards = rows.slice(1).map(row => Array.from({ length: width }, (_, i) => String(row[i] ?? '').trim())).filter(row => row.some(v => v !== '')); if (!newCards.length) throw Error('No flashcard rows found.'); headings = newHeadings; cards = newCards; startSide = 0; updateSideOptions(); $('deckName').textContent = file.name; rebuildOrder(); try { await saveCurrentDeck(file.name); $('message').textContent = `Loaded and saved ${cards.length} cards with ${headings.length} sides each.`; } catch (saveError) { currentDeckId = null; $('message').textContent = `Loaded ${cards.length} cards, but could not save: ${saveError.message}`; } } catch (err) { $('message').textContent = `Could not open file: ${err.message}`; } finally { e.target.value = ''; } });
+    async function initialize() { updateSideOptions(); rebuildOrder(); try { const id = localStorage.getItem(LAST_DECK_KEY); if (id) { const restored = await loadSavedDeck(id); if (!restored) localStorage.removeItem(LAST_DECK_KEY); } await refreshDeckList(); } catch (err) { $('message').textContent = `Saved decks unavailable: ${err.message}`; } }
+    initialize();
+  </script>
+</body>
+
+</html>
